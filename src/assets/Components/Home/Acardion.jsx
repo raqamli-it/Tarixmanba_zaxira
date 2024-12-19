@@ -1,73 +1,71 @@
-import React, { useEffect, useState } from "react";
-import bgPattern from "../../img/bg_pattern.png";
-import { endpoints } from "../../config/endpoints";
-import { DataService } from "../../config/dataService";
-import { Link, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router";
+import Layout from "../../../Layout";
 
-export default function Acardion() {
-  const [apiData, setApiData] = useState([]);
+import Home from "../../../assets/Page/Home";
+import LibraryCatigory from "../../../assets/Page/LibraryCatigory";
+import Login from "../../../assets/Page/Login";
+import News from "../../../assets/Page/News";
+import AboutUs from "../../../assets/Page/AboutUs";
+import ShablonManba from "../../../assets/Page/Shablon";
+import Shablon from "../../../assets/Page/Shablon";
+import LibraryCategoryDetail from "../../../assets/Page/LibraryCatigoryDeteyl";
+import CardDeteil from "../../../assets/Page/CardDeteil";
+import Register from "../../../assets/Page/Register";
+import NotFound from "../../../assets/Page/NotFound";
+import ScrollToTop from "../../../assets/Components/component/ScrollTutop";
+import { useEffect, useState } from "react";
+// import registonBgImg from "./assets/img/registonBgImg.jpg";
 
-  const navigate = useNavigate();
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        "https://backend.tarixmanba.uz/api/category-resource/"
-      );
-      const data = await response.json();
-      setApiData(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+function App() {
+  const [isAccessible, setIsAccessible] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    const endTime = new Date("2024-12-19T22:00:00").getTime();
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      if (now >= endTime) {
+        setIsAccessible(true);
+        clearInterval(interval);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="">
-      <div className="wrapper-3d h-[400px]">
-        <div className="items-3d">
-          {apiData?.slice(0, 7).map((item, idx) => (
-            <div
-              key={item.id}
-              className="item-3d"
-              tabIndex="0"
-              style={{ backgroundImage: `url(${item?.image})` }}
-            >
-              <h1
-                onClick={() => navigate(`/sources/archive/${item.id}`)}
-                className="title-3d text-[20px] text-white font-bold"
-              >
-                {item.title}
-              </h1>
-            </div>
-          ))}
+    <div>
+      <ScrollToTop />
+      {!isAccessible ? (
+        <div className="relative h-[100vh]">
+          <div className="absolute top-1/2 left-1/2 text-white text-center -translate-x-1/2 -translate-y-1/2 w-[50%] md:w-[70%] sm:w-[90%]">
+            <h1 className="text-[38px]">Texnik ishlar olib borilmoqda</h1>
+            <p className="text-[18px]">
+              Saytimiz <strong>2024-12-19 soat 22:00</strong> gacha ishlamaydi.
+            </p>
+            <p className="text-[16px]">Uzilishlar uchun uzr so'raymiz.</p>
+          </div>
         </div>
-      </div>
-
-      <div className="wrapper-3d h-[400px]">
-        <div className="items-3d">
-          {apiData?.slice(8, 13).map((item, idx) => (
-            <div
-              key={item.id}
-              className="item-3d"
-              tabIndex="0"
-              style={{ backgroundImage: `url(${item?.image})` }}
-            >
-              <h1
-                onClick={() => navigate(`/sources/archive/${item.id}`)}
-                className="title-3d text-[20px] text-white font-bold"
-              >
-                {item.title}
-              </h1>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="accardion_pattern">
-        <img src={bgPattern} alt="" />
-      </div>
+      ) : (
+        <Routes>
+          <Route path="/" Component={Layout}>
+            <Route path="/" Component={Home} />
+            <Route path="/news" Component={News} />
+            <Route path="/news/:id" Component={News} />
+            <Route path="/library" Component={LibraryCatigory} />
+            <Route
+              path="/libraryDetail/:id"
+              Component={LibraryCategoryDetail}
+            />
+            <Route path="/cardDetail/:id" Component={CardDeteil} />
+            <Route path="/login" Component={Login} />
+            <Route path="/sources/:type/:id" Component={Shablon} />
+            <Route path="*" Component={NotFound} />
+          </Route>
+        </Routes>
+      )}
     </div>
   );
 }
+
+export default App;
